@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Village Interest Calculator</title>
+<meta name="description" content="Free simple interest calculator in Kannada, English, Telugu, Hindi, Malayalam and Tamil. Calculate monthly and yearly interest easily.">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #eef7f0;
+  margin: 0;
+  padding: 15px;
+}
+
+header {
+  background: #176b45;
+  color: white;
+  text-align: center;
+  padding: 22px 10px;
+  border-radius: 14px;
+}
+
+.container {
+  background: white;
+  max-width: 450px;
+  margin: 25px auto;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px #ccc;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin-top: 7px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  background: #176b45;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+}
+
+#result {
+  display: none;
+  margin-top: 20px;
+  padding: 15px;
+  background: #e5f5e9;
+  border-radius: 9px;
+  line-height: 2;
+}
+
+.total {
+  color: #176b45;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+footer {
+  text-align: center;
+  margin-top: 25px;
+  color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Village Interest Calculator</h1>
+<p id="subtitle">Easy Interest Calculation for Everyone</p>
+</header>
+
+<div class="container">
+
+<label id="languageLabel">Choose Language</label>
+<select id="language" onchange="changeLanguage()">
+<option value="en">English</option>
+<option value="kn">ಕನ್ನಡ</option>
+<option value="te">తెలుగు</option>
+<option value="hi">हिन्दी</option>
+<option value="ml">മലയാളം</option>
+<option value="ta">தமிழ்</option>
+</select>
+
+<h2 id="heading">Calculate Your Interest</h2>
+
+<label id="principalLabel">Principal Amount (₹)</label>
+<input type="number" id="principal" min="0.01" step="any" placeholder="Enter amount">
+
+<label id="rateLabel">Interest Rate (%)</label>
+<input type="number" id="rate" min="0" step="any" placeholder="Enter rate">
+
+<label id="rateTypeLabel">Interest Rate Type</label>
+<select id="rateType">
+<option value="monthly" id="monthlyRate">Monthly</option>
+<option value="yearly" id="yearlyRate">Yearly</option>
+</select>
+
+<label id="durationLabel">Duration</label>
+<input type="number" id="duration" min="0.01" step="any" placeholder="Enter duration">
+
+<label id="durationTypeLabel">Duration Type</label>
+<select id="durationType">
+<option value="months" id="months">Months</option>
+<option value="years" id="years">Years</option>
+</select>
+
+<button onclick="calculateInterest()" id="calculateButton">
+Calculate Interest
+</button>
+
+<div id="result" aria-live="polite"></div>
+
+</div>
+
+<footer>
+<p>Village Interest Calculator</p>
+<p>Simple • Easy • Free</p>
+<p>Simple interest calculation only.</p>
+</footer>
+
+<script>
+const translations = {
+en: {
+subtitle:"Easy Interest Calculation for Everyone",
+language:"Choose Language",heading:"Calculate Your Interest",
+principal:"Principal Amount (₹)",rate:"Interest Rate (%)",
+rateType:"Interest Rate Type",monthly:"Monthly",yearly:"Yearly",
+duration:"Duration",durationType:"Duration Type",
+months:"Months",years:"Years",calculate:"Calculate Interest",
+principalResult:"Principal Amount",interestResult:"Interest Amount",
+total:"Total Amount",invalid:"Please enter valid amounts and duration."
+},
+kn: {
+subtitle:"ಎಲ್ಲರಿಗೂ ಸುಲಭ ಬಡ್ಡಿ ಲೆಕ್ಕಾಚಾರ",
+language:"ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",heading:"ನಿಮ್ಮ ಬಡ್ಡಿಯನ್ನು ಲೆಕ್ಕ ಹಾಕಿ",
+principal:"ಅಸಲು ಮೊತ್ತ (₹)",rate:"ಬಡ್ಡಿ ದರ (%)",
+rateType:"ಬಡ್ಡಿ ದರದ ವಿಧ",monthly:"ತಿಂಗಳಿಗೆ",yearly:"ವರ್ಷಕ್ಕೆ",
+duration:"ಅವಧಿ",durationType:"ಅವಧಿಯ ವಿಧ",
+months:"ತಿಂಗಳುಗಳು",years:"ವರ್ಷಗಳು",calculate:"ಬಡ್ಡಿ ಲೆಕ್ಕ ಹಾಕಿ",
+principalResult:"ಅಸಲು ಮೊತ್ತ",interestResult:"ಬಡ್ಡಿ ಮೊತ್ತ",
+total:"ಒಟ್ಟು ಮೊತ್ತ",invalid:"ಸರಿಯಾದ ಮೊತ್ತ ಮತ್ತು ಅವಧಿಯನ್ನು ನಮೂದಿಸಿ."
+},
+te: {
+subtitle:"అందరికీ సులభమైన వడ్డీ లెక్కింపు",
+language:"భాషను ఎంచుకోండి",heading:"మీ వడ్డీని లెక్కించండి",
+principal:"అసలు మొత్తం (₹)",rate:"వడ్డీ రేటు (%)",
+rateType:"వడ్డీ రేటు రకం",monthly:"నెలకు",yearly:"సంవత్సరానికి",
+duration:"కాల వ్యవధి",durationType:"వ్యవధి రకం",
+months:"నెలలు",years:"సంవత్సరాలు",calculate:"వడ్డీ లెక్కించండి",
+principalResult:"అసలు మొత్తం",interestResult:"వడ్డీ మొత్తం",
+total:"మొత్తం",invalid:"సరైన మొత్తాలు మరియు వ్యవధిని నమోదు చేయండి."
+},
+hi: {
+subtitle:"सभी के लिए आसान ब्याज गणना",
+language:"भाषा चुनें",heading:"अपना ब्याज कैलकुलेट करें",
+principal:"मूलधन (₹)",rate:"ब्याज दर (%)",
+rateType:"ब्याज दर का प्रकार",monthly:"मासिक",yearly:"वार्षिक",
+duration:"अवधि",durationType:"अवधि का प्रकार",
+months:"महीने",years:"साल",calculate:"ब्याज की गणना करें",
+principalResult:"मूलधन",interestResult:"ब्याज राशि",
+total:"कुल राशि",invalid:"कृपया सही राशि और अवधि दर्ज करें।"
+},
+ml: {
+subtitle:"എല്ലാവർക്കും എളുപ്പമുള്ള പലിശ കണക്കുകൂട്ടൽ",
+language:"ഭാഷ തിരഞ്ഞെടുക്കുക",heading:"നിങ്ങളുടെ പലിശ കണക്കാക്കുക",
+principal:"മുതൽ തുക (₹)",rate:"പലിശ നിരക്ക് (%)",
+rateType:"പലിശ നിരക്കിന്റെ തരം",monthly:"പ്രതിമാസം",yearly:"പ്രതിവർഷം",
+duration:"കാലയളവ്",durationType:"കാലയളവിന്റെ തരം",
+months:"മാസങ്ങൾ",years:"വർഷങ്ങൾ",calculate:"പലിശ കണക്കാക്കുക",
+principalResult:"മുതൽ തുക",interestResult:"പലിശ തുക",
+total:"ആകെ തുക",invalid:"ശരിയായ തുകയും കാലയളവും നൽകുക."
+},
+ta: {
+subtitle:"அனைவருக்கும் எளிய வட்டி கணக்கீடு",
+language:"மொழியைத் தேர்ந்தெடுக்கவும்",heading:"உங்கள் வட்டியைக் கணக்கிடுங்கள்",
+principal:"அசல் தொகை (₹)",rate:"வட்டி விகிதம் (%)",
+rateType:"வட்டி விகித வகை",monthly:"மாதத்திற்கு",yearly:"ஆண்டிற்கு",
+duration:"கால அளவு",durationType:"கால அளவு வகை",
+months:"மாதங்கள்",years:"ஆண்டுகள்",calculate:"வட்டியைக் கணக்கிடுங்கள்",
+principalResult:"அசல் தொகை",interestResult:"வட்டி தொகை",
+total:"மொத்த தொகை",invalid:"சரியான தொகை மற்றும் கால அளவை உள்ளிடவும்."
+}
+};
+
+function changeLanguage() {
+  const t = translations[document.getElementById("language").value];
+  document.documentElement.lang = document.getElementById("language").value;
+
+  const ids = {
+    subtitle:"subtitle",
+    language:"languageLabel",
+    heading:"heading",
+    principal:"principalLabel",
+    rate:"rateLabel",
+    rateType:"rateTypeLabel",
+    monthly:"monthlyRate",
+    yearly:"yearlyRate",
+    duration:"durationLabel",
+    durationType:"durationTypeLabel",
+    months:"months",
+    years:"years",
+    calculate:"calculateButton"
+  };
+
+  for (const key in ids) {
+    document.getElementById(ids[key]).textContent = t[key];
+  }
+
+  document.getElementById("result").style.display = "none";
+}
+
+function calculateInterest() {
+  const p = Number(document.getElementById("principal").value);
+  const r = Number(document.getElementById("rate").value);
+  const d = Number(document.getElementById("duration").value);
+
+  const rateType = document.getElementById("rateType").value;
+  const durationType = document.getElementById("durationType").value;
+  const lang = document.getElementById("language").value;
+  const t = translations[lang];
+
+  if (!Number.isFinite(p) || !Number.isFinite(r) ||
+      !Number.isFinite(d) || p <= 0 || r < 0 || d <= 0) {
+    alert(t.invalid);
+    return;
+  }
+
+  let time = d;
+
+  if (rateType === "monthly" && durationType === "years") {
+    time = d * 12;
+  }
+
+  if (rateType === "yearly" && durationType === "months") {
+    time = d / 12;
+  }
+
+  const interest = (p * r * time) / 100;
+  const total = p + interest;
+
+  const money = n => "₹" + n.toLocaleString("en-IN", {
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+
+  const result = document.getElementById("result");
+
+  result.innerHTML = `
+    <h3>${t.heading}</h3>
+    ${t.principalResult}: ${money(p)}<br>
+    ${t.interestResult}: ${money(interest)}<br>
+    <hr>
+    <div class="total">${t.total}: ${money(total)}</div>
+  `;
+
+  result.style.display = "block";
+}
+</script>
+
+</body>
+</html>
